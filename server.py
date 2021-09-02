@@ -10,6 +10,7 @@ PROVIDERS = {}
 SERVICES = {}
 PROVIDER_SETTINGS = {}  # TODO
 
+PROVIDER_URL = ""
 
 ######################################
 
@@ -28,57 +29,84 @@ def get_ip():
 
 ######################################
 
-@app.route('/api/consumer/register', methods=['POST', 'PUT'])
-def add_device():
-    data = request.get_json() 
-    CONSUMERS[data['url']] = data 
-    return "ok"
+# @app.route('/api/consumer/register', methods=['POST', 'PUT'])
+# def add_device():
+#     data = request.get_json() 
+#     CONSUMERS[data['url']] = data 
+#     return "ok"
 
-@app.route('/api/consumer/unregister', methods=['POST', 'PUT'])
-def remove_device():
-    data = request.get_json() 
-    CONSUMERS.pop(data['url'])
-    return "ok"
+# @app.route('/api/consumer/unregister', methods=['POST', 'PUT'])
+# def remove_device():
+#     data = request.get_json() 
+#     CONSUMERS.pop(data['url'])
+#     return "ok"
 
-@app.route('/api/consumer/list', methods=['GET'])
-def list_device():
-    return json.dumps(CONSUMERS)
+# @app.route('/api/consumer/list', methods=['GET'])
+# def list_device():
+#     return json.dumps(CONSUMERS)
+
+######################################
+
+# @app.route('/api/provider/register', methods=['POST', 'PUT'])
+# def add_device():
+#     data = request.get_json() 
+#     PROVIDERS[data['url']] = data 
+#     return "ok"
+
+# @app.route('/api/provider/unregister', methods=['POST', 'PUT'])
+# def remove_device():
+#     data = request.get_json() 
+#     PROVIDERS.pop(data['url'])
+#     return "ok"
+
+# @app.route('/api/provider/list', methods=['GET'])
+# def list_device():
+#     return json.dumps(PROVIDERS)
 
 ######################################
 
 @app.route('/api/provider/register', methods=['POST', 'PUT'])
 def add_device():
     data = request.get_json() 
-    PROVIDERS[data['url']] = data 
-    return "ok"
-
-@app.route('/api/provider/unregister', methods=['POST', 'PUT'])
-def remove_device():
-    data = request.get_json() 
-    PROVIDERS.pop(data['url'])
+    global PROVIDER_URL
+    PROVIDER_URL = data['url']
     return "ok"
 
 @app.route('/api/provider/list', methods=['GET'])
 def list_device():
-    return json.dumps(PROVIDERS)
+    return json.dumps(PROVIDER_URL)
 
 ######################################
 
 @app.route('/api/service/request', methods=['POST', 'PUT'])
 def add_depl():
     data = request.get_json() 
-    SERVICES[data['name']] = data 
+    print(data)
+    try:
+        r = requests.put("{}/api/service/add".format(PROVIDER_URL), json=data)
+        print(r.content)
+    except:
+        print("exception")
+
+    # SERVICES[data['id']] = data 
     return "ok"
 
 @app.route('/api/service/remove', methods=['POST', 'PUT'])
 def remove_depl():
     data = request.get_json() 
-    SERVICES.pop(data['name'])
+    try:
+        print(data)
+        r = requests.put("{}/api/service/remove".format(PROVIDER_URL), json=data)
+        print(r.content)
+    except:
+        print("exception")
+
+    # SERVICES.pop(data['id'])
     return "ok"
 
 @app.route('/api/service/list', methods=['GET'])
 def list_depl():
-    return json.dumps(DEPLOYMENTS)
+    return json.dumps(SERVICES)
 
 # ######################################
 
