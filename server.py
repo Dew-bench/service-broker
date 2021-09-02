@@ -104,6 +104,19 @@ def remove_depl():
     # SERVICES.pop(data['id'])
     return "ok"
 
+@app.route('/api/service/url', methods=['POST', 'PUT'])
+def url_depl():
+    data = request.get_json() 
+    try:
+        print(data)
+        r = requests.put("{}/api/service/url".format(PROVIDER_URL), json=data)
+        print(r.content)
+    except:
+        print("exception")
+
+    # SERVICES.pop(data['id'])
+    return r
+
 @app.route('/api/service/list', methods=['GET'])
 def list_depl():
     return json.dumps(SERVICES)
